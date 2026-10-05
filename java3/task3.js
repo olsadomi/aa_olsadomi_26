@@ -7,5 +7,5 @@ function m3(n) {
 
 // Function/input   Returns     Calls
 // m1 (8)	            15	    15
-// m2(20)	            16	    2020
+// m2(20)	            13	    1627
 // m3(20)	        524288	    1048575
