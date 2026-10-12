@@ -12,3 +12,5 @@ function mm(n) {
 // and mm() eventually produce m2(20) = 13. 
 // Because results are recalculated instead of saved, 
 // evaluating it requires 1,627 total calls to m2() and mm().
+//time complexity O(2^n) - each call branches into two
+//space complexity O(n) due to the recursion stack depth

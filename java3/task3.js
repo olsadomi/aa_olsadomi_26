@@ -6,7 +6,8 @@ function m3(n) {
 //comment: Every call makes two identical calls with n - 1, 
 // so its value doubles at each level and returns 2¹⁹ = 524,288. 
 // Its full binary call tree contains 2²⁰ − 1 = 1,048,575 calls.
-
+//time complexity O(2^n) - each call branches into two
+//space complexity O(n) due to the recursion stack depth
 
 
 
