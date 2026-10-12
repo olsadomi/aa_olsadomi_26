@@ -1,0 +1,73 @@
+Problem 1:
+main function: getEmployeeDepth(employees, employeeId)
+what do we want: determine how far the employee is from the CEO.
+- CEO has depth 0
+- Someone reporting directly to CEO has depth 1
+- Next level is depth 2... continues until requested employee is reached. 
+
+Return -1 if
+- the employee doesn't exist
+- the supervisor doesn't exist
+- the supervisor chain contains a cycle
+
+Time complexity: O(n)
+Space complexity: O(n)
+
+
+
+Problem 2:
+main function: getAllSubordinates(employees, managerId)
+what do we want: find everyone who reports to a manager; 
+directly and indirectly through another manager
+- direct reports: depth 1
+- their reports: depth 2
+
+Return -1 if
+- manager doesn't exist
+- employee has no subordinates
+
+Time complexity: O(nlogn)
+Space complexity: O(n)
+
+
+
+Problem 3:
+main function: getPathToCeo(employees, employeeId)
+what do we want: return the complete chain from an employee up to the CEO
+
+Return -1 if
+- the employee doesn't exist
+- a supervisor in the chain doesn't exist
+- the chain contains a cycle
+
+Time complexity: O(n+h^2)
+Space complexity: O(n)
+
+
+
+
+Problem 4:
+main function: findLowestCommonManager(employees, empId1, empId2)
+what do we want: find the closest manager who is an ancestor of both employees.
+- if one employee manages the other, that employee is the answer
+- if both IDs are identical, that employee is the answer
+
+Return null if
+- employee doesn't exist
+- no shared manager
+
+Time complexity: O(n+h1+h2)
+Space complexity: O(n)
+
+
+
+Problem 5:
+main function: calculateTeamSalary(employees,managerId)
+what do we want: calculate the total salary of the manager, 
+all direct reports, all indirect reports
+
+Return 0 if
+- the manager doesn't exist
+
+Time complexity: O(n)
+Space complexity: O(n)

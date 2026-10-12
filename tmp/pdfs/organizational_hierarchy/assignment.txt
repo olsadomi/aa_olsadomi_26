@@ -1,0 +1,337 @@
+===== PAGE 1 =====
+Organizational Hierarchy Analysis
+Programming Assignment
+Introduction
+In modern software systems, hierarchical relationships are common—from organizational structures
+to file systems to category trees in e-commerce platforms. This assignment focuses on analyzing an
+organizational hierarchy where employees report to supervisors in a tree structure.
+Every problem in this assignment must be solved with recursion. Each function is expected to
+express its traversal as a recursive walk over the hierarchy (a recursive helper function is fine);
+iterative loops may be used only for bookkeeping such as building an index, iterating over a node's
+children, or sorting the final result.
+Dataset
+You are provided with employee data in JSON format. Each employee has a unique ID, and most
+employees have a supervisor_id pointing to their manager. The CEO has no supervisor
+(supervisor_id: null). The dataset below contains exactly one employee with supervisor_id: null,
+so the data forms a single tree rooted at the CEO.
+TypeScript Interfaces
+interface Employee {
+  id: number;
+  name: string;
+  position: string;
+  salary: number;
+  supervisor_id: number | null;
+}
+interface EmployeeData {
+  employees: Employee[];
+}
+
+===== PAGE 2 =====
+JSON Structure
+{
+  "employees": [
+    { "id": 1,  "name": "Alice Johnson",  "position": "CEO",                 "salary": 250000, 
+"supervisor_id": null },
+    { "id": 2,  "name": "Bob Smith",      "position": "CTO",                 "salary": 180000, 
+"supervisor_id": 1 },
+    { "id": 3,  "name": "Carol White",    "position": "CFO",                 "salary": 175000, 
+"supervisor_id": 1 },
+    { "id": 4,  "name": "David Brown",    "position": "Engineering Manager", "salary": 140000, 
+"supervisor_id": 2 },
+    { "id": 5,  "name": "Eve Davis",      "position": "QA Manager",          "salary": 130000, 
+"supervisor_id": 2 },
+    { "id": 6,  "name": "Frank Wilson",   "position": "Senior Accountant",   "salary":  95000, 
+"supervisor_id": 3 },
+    { "id": 7,  "name": "Grace Lee",      "position": "Senior Developer",    "salary": 120000, 
+"supervisor_id": 4 },
+    { "id": 8,  "name": "Henry Martinez", "position": "Junior Developer",    "salary":  85000, 
+"supervisor_id": 4 },
+    { "id": 9,  "name": "Ivy Chen",       "position": "QA Engineer",         "salary":  90000, 
+"supervisor_id": 5 },
+    { "id": 10, "name": "Jack Thompson",  "position": "DevOps Engineer",     "salary": 110000, 
+"supervisor_id": 4 },
+    { "id": 11, "name": "Kelly Anderson", "position": "Junior Accountant",   "salary":  65000, 
+"supervisor_id": 6 },
+    { "id": 12, "name": "Liam Garcia",    "position": "Intern Developer",    "salary":  50000, 
+"supervisor_id": 7 }
+  ]
+}
+Organizational Tree Visualization
+Alice Johnson (CEO, id=1)
+|-- Bob Smith (CTO, id=2)
+|   |-- David Brown (Engineering Manager, id=4)
+|   |   |-- Grace Lee (Senior Developer, id=7)
+|   |   |   `-- Liam Garcia (Intern Developer, id=12)
+|   |   |-- Henry Martinez (Junior Developer, id=8)
+|   |   `-- Jack Thompson (DevOps Engineer, id=10)
+|   `-- Eve Davis (QA Manager, id=5)
+|       `-- Ivy Chen (QA Engineer, id=9)
+`-- Carol White (CFO, id=3)
+    `-- Frank Wilson (Senior Accountant, id=6)
+        `-- Kelly Anderson (Junior Accountant, id=11)
+Problem 1: Calculate Employee Depth
+Description
+Determine the hierarchical depth (level) of any employee in the organization. The CEO is at depth 0,
+direct reports to the CEO are at depth 1, and so on.
+
+===== PAGE 3 =====
+Function Signature
+function getEmployeeDepth(employees: Employee[], employeeId: number): number {
+  /**
+   * Calculate the depth of an employee in the organizational hierarchy.
+   *
+   * @param employees  - Array of employee objects
+   * @param employeeId - The ID of the employee to find the depth for
+   * @returns The depth level (CEO = 0), or -1 if the employee is not found
+   *          or lies on a cycle
+   */
+  // Your implementation here
+}
+Input Format
+employees: An array of employee objects
+employeeId: An integer, the employee's unique ID
+Output Format
+Return an integer representing the depth level. Return -1 if the employee ID does not exist, if the
+employee's supervisor chain references an ID that does not exist, or if that chain contains a cycle.
+Example
+getEmployeeDepth(employees, 1);   // Returns: 0  (Alice - CEO)
+getEmployeeDepth(employees, 2);   // Returns: 1  (Bob - CTO)
+getEmployeeDepth(employees, 7);   // Returns: 3  (Grace - Senior Developer)
+getEmployeeDepth(employees, 12);  // Returns: 4  (Liam - Intern Developer)
+getEmployeeDepth(employees, 999); // Returns: -1 (Not found)
+Requirements
+Implement using recursion: the depth of an employee is 0 for the CEO and 1 +
+depth(supervisor) otherwise
+Handle invalid employee IDs gracefully (return -1, do not throw)
+Detect circular references (cycles) in the supervisor chain and return -1 — for example, by
+passing the set of already-visited IDs down the recursion
+Build an id → employee lookup (a Map) once, in O(n). The recursive walk itself must then be O(h),
+where h is the height of the tree — one step per level, with no scan of the whole array per level
+Problem 2: Get All Subordinates
+Description
+Given a manager's employee ID, retrieve all employees who report to them directly or indirectly (the
+entire subtree below that manager). The manager themselves is not included. Include each
+subordinate's depth relative to the specified manager.
+
+===== PAGE 4 =====
+Function Signature
+interface Subordinate {
+  id: number;
+  name: string;
+  relative_depth: number;
+}
+function getAllSubordinates(employees: Employee[], managerId: number): Subordinate[] {
+  /**
+   * Retrieve all subordinates under a given manager.
+   *
+   * @param employees - Array of employee objects
+   * @param managerId - The ID of the manager
+   * @returns Array of subordinate objects sorted by relative_depth (ascending),
+   *          then by id (ascending). Empty array if the manager does not exist
+   *          or has no subordinates.
+   */
+  // Your implementation here
+}
+Input Format
+employees: An array of employee objects
+managerId: An integer, the manager's unique ID
+Output Format
+Return an array of objects, each containing:
+id: The subordinate's employee ID
+name: The subordinate's full name
+relative_depth: How many levels below the manager (direct reports = 1)
+Sort the results first by relative_depth (ascending), then by id (ascending).
+Example
+getAllSubordinates(employees, 2);  // Returns:
+[
+  { id: 4,  name: "David Brown",    relative_depth: 1 },
+  { id: 5,  name: "Eve Davis",      relative_depth: 1 },
+  { id: 7,  name: "Grace Lee",      relative_depth: 2 },
+  { id: 8,  name: "Henry Martinez", relative_depth: 2 },
+  { id: 9,  name: "Ivy Chen",       relative_depth: 2 },
+  { id: 10, name: "Jack Thompson",  relative_depth: 2 },
+  { id: 12, name: "Liam Garcia",    relative_depth: 3 }
+]
+getAllSubordinates(employees, 6);   // Returns:
+[
+  { id: 11, name: "Kelly Anderson", relative_depth: 1 }
+]
+getAllSubordinates(employees, 12);  // Returns: [] (no subordinates)
+getAllSubordinates(employees, 999); // Returns: [] (manager not found)
+
+===== PAGE 5 =====
+Requirements
+Implement using recursion: collect a node's direct reports, then recurse into each of them with
+relative_depth + 1
+Build a supervisor_id → children index once so the traversal visits each employee at most once
+— O(n) overall, plus the cost of the final sort
+Return an empty array if the manager has no subordinates or if the manager ID does not exist
+Results must be sorted as specified
+Problem 3: Find Path to CEO
+Description
+Construct the complete management chain from any employee up to the CEO. This represents the
+path through the tree from a node to the root.
+Function Signature
+function getPathToCeo(employees: Employee[], employeeId: number): number[] {
+  /**
+   * Find the path from an employee up to the CEO.
+   *
+   * @param employees  - Array of employee objects
+   * @param employeeId - The starting employee's ID
+   * @returns Array of employee IDs from the employee to the CEO (both inclusive),
+   *          or an empty array if the employee is not found or the chain is
+   *          broken or cyclic
+   */
+  // Your implementation here
+}
+Input Format
+employees: An array of employee objects
+employeeId: An integer, the starting employee's ID
+Output Format
+Return an array of integers representing employee IDs from the starting employee up to the CEO
+(inclusive). Return an empty array if the employee ID does not exist, if a supervisor ID in the chain
+does not exist, or if the chain contains a cycle.
+
+===== PAGE 6 =====
+Example
+getPathToCeo(employees, 12);  // Returns: [12, 7, 4, 2, 1]
+// Path: Liam Garcia -> Grace Lee -> David Brown -> Bob Smith -> Alice Johnson
+getPathToCeo(employees, 1);   // Returns: [1]
+// The CEO has no supervisor
+getPathToCeo(employees, 5);   // Returns: [5, 2, 1]
+// Path: Eve Davis -> Bob Smith -> Alice Johnson
+getPathToCeo(employees, 999); // Returns: [] (not found)
+Requirements
+Implement using recursion: path(e) = [e.id, ...path(e.supervisor)], with the CEO as the
+base case
+Return an empty array if the employee ID does not exist
+Handle the CEO case (the path contains only the CEO)
+Guard against cycles, as in Problem 1
+Problem 4: Lowest Common Manager
+Description
+Given two employees, find their lowest common manager—the deepest employee in the hierarchy
+that is an ancestor of, or equal to, both. This is the Lowest Common Ancestor (LCA) problem on a
+tree. An employee counts as its own ancestor: if one employee is an ancestor of the other, that
+employee is the answer.
+
+===== PAGE 7 =====
+Function Signature
+interface CommonManager {
+  manager_id: number;
+  manager_name: string;
+  distance_to_emp1: number;
+  distance_to_emp2: number;
+}
+function findLowestCommonManager(
+  employees: Employee[],
+  empId1: number,
+  empId2: number
+): CommonManager | null {
+  /**
+   * Find the lowest common manager of two employees.
+   *
+   * @param employees - Array of employee objects
+   * @param empId1    - First employee's ID
+   * @param empId2    - Second employee's ID
+   * @returns Object describing the common manager, or null if either employee
+   *          does not exist or the two share no common manager
+   */
+  // Your implementation here
+}
+Input Format
+employees: An array of employee objects
+empId1, empId2: Integers, the two employees' IDs
+Output Format
+Return an object containing:
+manager_id: The ID of the lowest common manager
+manager_name: The full name of that manager
+distance_to_emp1: Number of steps up from empId1 to the common manager (0 if empId1 is the
+common manager)
+distance_to_emp2: Number of steps up from empId2 to the common manager
+Return null if either employee does not exist. In the dataset above every pair of employees has a
+common manager (the CEO at worst), but your implementation should also return null if the data
+ever contains two disconnected trees.
+
+===== PAGE 8 =====
+Example
+findLowestCommonManager(employees, 12, 9);  // Returns:
+{
+  manager_id: 2,
+  manager_name: "Bob Smith",
+  distance_to_emp1: 3,  // Liam -> Grace -> David -> Bob
+  distance_to_emp2: 2   // Ivy -> Eve -> Bob
+}
+findLowestCommonManager(employees, 8, 10);  // Returns:
+{
+  manager_id: 4,
+  manager_name: "David Brown",
+  distance_to_emp1: 1,  // Henry -> David
+  distance_to_emp2: 1   // Jack  -> David
+}
+findLowestCommonManager(employees, 1, 12);  // Returns:
+{
+  manager_id: 1,
+  manager_name: "Alice Johnson",
+  distance_to_emp1: 0,  // Alice is already the common manager
+  distance_to_emp2: 4   // Liam -> Grace -> David -> Bob -> Alice
+}
+findLowestCommonManager(employees, 7, 7);   // Returns:
+{
+  manager_id: 7,
+  manager_name: "Grace Lee",
+  distance_to_emp1: 0,
+  distance_to_emp2: 0
+}
+findLowestCommonManager(employees, 999, 1); // Returns: null
+Requirements
+Reuse your recursive getPathToCeo from Problem 3 for both employees, then find the first ID
+that appears in both paths; the distances are the positions of that ID within each path
+Handle the edge case where one employee is an ancestor of the other, including empId1 ===
+empId2
+Return null when either employee does not exist, before computing any path
+Compute each path only once, and test membership of the second path with a Set rather than re-
+scanning it for every element
+Problem 5: Total Team Salary
+Description
+Calculate the total salary budget for a manager's entire team: the manager's own salary plus the
+salaries of all direct and indirect reports.
+
+===== PAGE 9 =====
+Function Signature
+function calculateTeamSalary(employees: Employee[], managerId: number): number {
+  /**
+   * Calculate the total salary of a manager and all of their subordinates.
+   *
+   * @param employees - Array of employee objects
+   * @param managerId - The manager's employee ID
+   * @returns Total salary for the entire team, or 0 if the manager is not found
+   */
+  // Your implementation here
+}
+Input Format
+employees: An array of employee objects
+managerId: An integer, the manager's ID
+Output Format
+Return a number: the total salary of the manager and all of their subordinates. Return 0 if the manager
+ID does not exist.
+Example
+calculateTeamSalary(employees, 1);
+// Returns: 1490000
+// (Sum of all 12 employees' salaries)
+calculateTeamSalary(employees, 4);
+// Returns: 505000
+// (David: 140000 + Grace: 120000 + Henry: 85000 + Jack: 110000 + Liam: 50000)
+calculateTeamSalary(employees, 7);
+// Returns: 170000
+// (Grace: 120000 + Liam: 50000)
+calculateTeamSalary(employees, 12);
+// Returns: 50000
+// (Liam has no subordinates, only his own salary)
+calculateTeamSalary(employees, 999);
+// Returns: 0  (manager not found)
+Requirements
+Implement using recursion: teamSalary(e) = e.salary + sum(teamSalary(c)) over every direct
+report c of e
+The manager's own salary is included in the total
+Handle the case where managerId does not exist (return 0)
+Include test cases for the root (CEO), a middle manager, a leaf employee, and a non-existent ID
