@@ -133,3 +133,13 @@ if (typeof module !== "undefined") {
         horspool2
     };
 }
+
+
+
+
+// | Function | Result |
+// |---|---|
+// | `shiftTable(P)` | `B→2, A→4, R→3, E→1` |
+// | `bruteForce(T, P)` | `16` |
+// | `horspool(T, P)` | `16` |
+// | `horspool2(T, P)` | `-1` |
